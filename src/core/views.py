@@ -4,12 +4,18 @@ from django.shortcuts import render
 # third party imports
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from .serializers import PostSerializer
 from .models import Post
 
 
 class Test_view(APIView):
+
+    # Create Token - in cmd - python manage.py drf_create_token username
+
+    permission_classes = (IsAuthenticated, )
+
     def get(self, request, *args, **kwargs):
         ### get request serializ for all instance
         qs = Post.objects.all()
