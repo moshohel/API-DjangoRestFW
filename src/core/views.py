@@ -11,6 +11,36 @@ from rest_framework import mixins
 from .serializers import PostSerializer
 from .models import Post
 
+### Every Class Test_view, PostView, PostCreateView, PostListCreateView do the same work
+
+class Test_view(APIView):
+    # Create Token - in cmd - python manage.py drf_create_token username
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, *args, **kwargs):
+        ### get request serializ for all instance
+        qs = Post.objects.all()
+        serializer = PostSerializer(qs, many=True)
+
+        ### get request serializ for one instance
+        #post = qs.first()
+        #serializer = PostSerializer(post)
+        return Response(serializer.data)
+
+    def post(self, request, *args, **kwargs):
+        serializer = PostSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+# def test_view(request):
+#     data = {
+#         'name': 'john',
+#         'age': 14
+#     }
+#     return JsonResponse(data)
+
 class PostView(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
@@ -35,33 +65,3 @@ class PostCreateView(mixins.ListModelMixin, generics.CreateAPIView):
 class PostListCreateView(generics.ListCreateAPIView):
     serializer_class = PostSerializer
     queryset = Post.objects.all()
-
-# class Test_view(APIView):
-
-#     # Create Token - in cmd - python manage.py drf_create_token username
-
-#     permission_classes = (IsAuthenticated, )
-
-#     def get(self, request, *args, **kwargs):
-#         ### get request serializ for all instance
-#         qs = Post.objects.all()
-#         serializer = PostSerializer(qs, many=True)
-
-#         ### get request serializ for one instance
-#         #post = qs.first()
-#         #serializer = PostSerializer(post)
-#         return Response(serializer.data)
-
-#     def post(self, request, *args, **kwargs):
-#         serializer = PostSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors)
-
-# def test_view(request):
-#     data = {
-#         'name': 'john',
-#         'age': 14
-#     }
-#     return JsonResponse(data)
